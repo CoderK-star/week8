@@ -16,181 +16,8 @@
     
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-            <style>
-                #map_f7c6290417a4e3bb10c1043409014bec {
-                    position: relative;
-                    width: 100.0%;
-                    height: 100.0%;
-                    left: 0.0%;
-                    top: 0.0%;
-                }
-                .leaflet-container { font-size: 1rem; }
-            </style>
-
-            <style>html, body {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-            </style>
-
-            <!-- Responsive side panel styles -->
-            <style>
-                .side-panel {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    height: 100%;
-                    width: 300px;
-                    max-width: 80%;
-                    background: #ffffff;
-                    box-shadow: 2px 0 8px rgba(0,0,0,0.25);
-                    transform: translateX(-80%); /* 半分見える状態がデフォルト(閉) */
-                    transition: transform 0.32s ease;
-                    z-index: 1090;
-                    display: flex;
-                    flex-direction: column;
-                    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
-                }
-                .side-panel.open { transform: translateX(0); }
-                .side-panel header {
-                    padding: 14px 16px 8px;
-                    background: #f3f4f6;
-                    border-bottom: 1px solid #e5e7eb;
-                    position: relative;
-                }
-                .side-panel header h2 {
-                    margin: 0;
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #111827;
-                }
-                #panelToggle {
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    background: #2563eb;
-                    color: #fff;
-                    border: none;
-                    padding: 6px 10px;
-                    font-size: 12px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                }
-                #panelToggle:focus { outline: 2px solid #fff; }
-                .panel-section { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; }
-                .panel-section h3 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: #374151; }
-                .panel-section label { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-bottom: 4px; }
-                .panel-scroll { flex: 1 1 auto; overflow-y: auto; }
-                .panel-footer { padding: 10px 16px; font-size: 11px; color: #6b7280; }
-                .search-box input { width: 100%; padding: 6px 8px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 4px; }
-                .search-results { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
-                .search-results button { text-align: left; border: 1px solid #dbeafe; background: #eff6ff; color: #1e3a8a; border-radius: 4px; padding: 6px 8px; font-size: 12px; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; }
-                .search-results button:hover, .search-results button:focus { background: #dbeafe; outline: none; }
-                .search-results button.active { background: #bfdbfe; border-color: #2563eb; }
-                .badge-count { background:#2563eb; color:#fff; border-radius:10px; padding:2px 6px; font-size:11px; }
-                .stat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-                .stat-chip { flex: 1 1 45%; min-width: 120px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px 8px; background: #f9fafb; }
-                .stat-chip strong { display: block; font-size: 15px; color: #111827; }
-                .stat-chip span { font-size: 11px; color: #6b7280; }
-                .stat-row { width: 100%; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 5px; padding: 6px 8px; font-size: 12px; margin-bottom: 4px; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; }
-                .stat-row:hover, .stat-row:focus { background: #eff6ff; border-color: #bfdbfe; outline: none; }
-                .muted-text { font-size: 11px; color: #6b7280; margin: 4px 0 6px; }
-                .overview-toggle { border: 1px solid #93c5fd; background: #e0f2fe; color: #1d4ed8; border-radius: 4px; padding: 5px 10px; font-size: 12px; cursor: pointer; margin-bottom: 8px; transition: background 0.2s ease, border-color 0.2s ease; }
-                .overview-toggle:hover:not(:disabled) { background: #bfdbfe; }
-                .overview-toggle:disabled { background: #f3f4f6; border-color: #d1d5db; color: #9ca3af; cursor: not-allowed; }
-                .overview-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
-                .overview-list li { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px; line-height: 1.5; }
-                .overview-list li strong { display: block; font-size: 13px; margin-bottom: 4px; color: #111827; }
-                .panel-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
-                .image-card { position: relative; border-radius: 6px; overflow: hidden; border: 1px solid #e5e7eb; background: #f8fafc; min-height: 70px; }
-                .image-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-                .image-card span { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); color: #fff; font-size: 11px; padding: 2px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .image-placeholder { background: #f3f4f6; color: #6b7280; border: 1px dashed #d1d5db; border-radius: 6px; padding: 10px; font-size: 12px; text-align: center; }
-                .image-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
-                .image-modal.open { opacity: 1; pointer-events: auto; }
-                .image-modal figure { max-width: 90vw; max-height: 90vh; margin: 0; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.35); position: relative; }
-                .image-modal img { max-width: 100%; max-height: 100%; display: block; }
-                .image-modal figcaption { padding: 10px 14px; font-size: 14px; color: #111827; background: #f9fafb; border-top: 1px solid #e5e7eb; }
-                .image-modal button { position: absolute; top: 8px; right: 8px; border: none; background: rgba(0,0,0,0.6); color: #fff; border-radius: 999px; width: 32px; height: 32px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-                @media (max-width: 600px) {
-                    #togglePanelBtn { top: 8px; left: 8px; font-size: 13px; padding: 8px 12px; }
-                    .side-panel { width: 260px; }
-                }
-            </style>
-
-            <style>#map {
-                position:absolute;
-                top:0;
-                bottom:0;
-                right:0;
-                left:0;
-                }
-            </style>
-
-            <style>
-                .layer-toggle {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-                    padding: 6px;
-                }
-                .layer-toggle .toggle-title {
-                    font-size: 12px;
-                    font-weight: 600;
-                    color: #111827;
-                    margin-bottom: 2px;
-                }
-                .layer-toggle .button-row {
-                    display: flex;
-                    gap: 4px;
-                    flex-wrap: wrap;
-                }
-                .layer-toggle button {
-                    border: none;
-                    background: #f3f4f6;
-                    color: #1f2937;
-                    padding: 6px 10px;
-                    font-size: 12px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: background 0.2s ease;
-                }
-                .layer-toggle button.active {
-                    background: #2563eb;
-                    color: #ffffff;
-                }
-                .layer-toggle button:focus {
-                    outline: 2px solid rgba(37, 99, 235, 0.3);
-                    outline-offset: 1px;
-                }
-                .map-legend {
-                    background: rgba(255,255,255,0.94);
-                    padding: 10px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    color: #1f2937;
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                    line-height: 1.4;
-                }
-                .map-legend .legend-title { font-weight: 600; margin-bottom: 4px; }
-                .map-legend .legend-scale { display: flex; align-items: flex-end; gap: 14px; }
-                .map-legend .legend-circle {
-                    border-radius: 50%;
-                    border: 2px solid #2563eb;
-                    background: rgba(37,99,235,0.15);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #1d4ed8;
-                    font-size: 10px;
-                }
-                .legend-circle[data-size="large"] { width: 32px; height: 32px; }
-                .legend-circle[data-size="medium"] { width: 22px; height: 22px; }
-                .legend-circle[data-size="small"] { width: 14px; height: 14px; }
-            </style>
+            <link rel="stylesheet" href="styles.css"/>
+            <link rel="stylesheet" href="map.css"/>
 
             <script>
                 L_NO_TOUCH = false;
@@ -220,6 +47,58 @@
                 <label><input type="checkbox" id="chkCluster" checked /> クラスター表示</label>
                 <label><input type="checkbox" id="chkSizeScale" checked /> 件数に応じたサイズ</label>
                 <label><input type="checkbox" id="chkTooltips" checked /> ポップアップ</label>
+            </section>
+            <section class="panel-section" id="incidentFilterSection">
+                <h3>詳細フィルター</h3>
+                <div class="filter-grid">
+                    <label>
+                        <span>発生地</span>
+                        <select id="filterCity" aria-label="発生地フィルター"></select>
+                    </label>
+                    <label>
+                        <span>施錠関係</span>
+                        <select id="filterLock" aria-label="施錠関係フィルター"></select>
+                    </label>
+                    <label>
+                        <span>発生年月日 (開始)</span>
+                        <input type="date" id="filterDateFrom" aria-label="発生年月日開始" />
+                    </label>
+                    <label>
+                        <span>発生年月日 (終了)</span>
+                        <input type="date" id="filterDateTo" aria-label="発生年月日終了" />
+                    </label>
+                    <label>
+                        <span>発生時 (開始)</span>
+                        <select id="filterTimeFrom" aria-label="発生時開始"></select>
+                    </label>
+                    <label>
+                        <span>発生時 (終了)</span>
+                        <select id="filterTimeTo" aria-label="発生時終了"></select>
+                    </label>
+                    <label>
+                        <span>発生場所</span>
+                        <select id="filterPlace" aria-label="発生場所フィルター"></select>
+                    </label>
+                    <label>
+                        <span>場所の詳細</span>
+                        <select id="filterPlaceDetail" aria-label="発生場所詳細フィルター"></select>
+                    </label>
+                    <label>
+                        <span>被害者の年齢</span>
+                        <select id="filterAge" aria-label="被害者年齢フィルター"></select>
+                    </label>
+                    <label>
+                        <span>被害者の職業</span>
+                        <select id="filterJob" aria-label="被害者職業フィルター"></select>
+                    </label>
+                </div>
+                <div class="filter-actions">
+                    <button type="button" id="applyIncidentFilters">検索</button>
+                    <button type="button" id="resetIncidentFilters" class="ghost">リセット</button>
+                </div>
+                <p id="filterSummary" class="muted-text">データ読み込み中...</p>
+                <div id="filterResults" class="incident-results" aria-live="polite"></div>
+                <button type="button" id="filterLoadMore" class="ghost" style="display:none;">さらに表示</button>
             </section>
             <section class="panel-section" id="statsSection">
                 <h3>統計 (上位)</h3>
@@ -1450,11 +1329,36 @@
     const imageModalImg = document.getElementById('imageModalImg');
     const imageModalCaption = document.getElementById('imageModalCaption');
     const imageModalClose = document.getElementById('imageModalClose');
+    const filterSection = document.getElementById('incidentFilterSection');
+    const filterSummary = document.getElementById('filterSummary');
+    const filterResults = document.getElementById('filterResults');
+    const filterLoadMoreBtn = document.getElementById('filterLoadMore');
+    const applyIncidentFiltersBtn = document.getElementById('applyIncidentFilters');
+    const resetIncidentFiltersBtn = document.getElementById('resetIncidentFilters');
+    const filterControls = {
+        city: document.getElementById('filterCity'),
+        lock: document.getElementById('filterLock'),
+        dateFrom: document.getElementById('filterDateFrom'),
+        dateTo: document.getElementById('filterDateTo'),
+        timeFrom: document.getElementById('filterTimeFrom'),
+        timeTo: document.getElementById('filterTimeTo'),
+        place: document.getElementById('filterPlace'),
+        placeDetail: document.getElementById('filterPlaceDetail'),
+        victimAge: document.getElementById('filterAge'),
+        victimJob: document.getElementById('filterJob')
+    };
+    const incidentState = {
+        data: [],
+        filtered: [],
+        page: 1,
+        pageSize: 12
+    };
     const markerGroup = typeof marker_cluster_69c0f70e9b722f845cf326cb5aeaf27f !== 'undefined'
         ? marker_cluster_69c0f70e9b722f845cf326cb5aeaf27f
         : null;
     const cityRecords = [];
     const recordMap = {};
+    const markerByCity = {};
     const wikiCache = new Map();
     const imageCache = new Map();
     let recordSequence = 0;
@@ -1527,6 +1431,9 @@
             record.latlng = layer.getLatLng();
             cityRecords.push(record);
             recordMap[record.id] = record;
+            if (!markerByCity[record.name] || record.count > markerByCity[record.name].count) {
+                markerByCity[record.name] = record;
+            }
         });
     }
 
@@ -1835,6 +1742,13 @@
     renderImages(null);
 
     let highlightState = { marker: null, originalStyle: null, originalRadius: null, timeout: null };
+    const eventMarkerIcon = L.divIcon({
+        className: 'event-marker-icon',
+        html: '<div class="event-marker-inner"></div>',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+    });
+    let activeEventMarker = null;
 
     function resetHighlight() {
         if (highlightState.marker && typeof highlightState.marker.setStyle === 'function') {
@@ -1868,6 +1782,60 @@
         highlightState.timeout = setTimeout(() => resetHighlight(), 5500);
     }
 
+    function buildEventPopup(record, cityName) {
+        if (!record) {
+            return null;
+        }
+        const rows = [
+            ['発生地', record.city || cityName || '不明'],
+            ['発生年月日', formatDateDisplay(record.date)],
+            ['発生時', formatTimeDisplay(record.time)],
+            ['発生場所', record.place || '不明'],
+            ['詳細', record.place_detail || '情報なし'],
+            ['被害者の年齢', record.victim_age || '不明'],
+            ['被害者の職業', record.victim_job || '不明'],
+            ['施錠関係', record.lock || '不明']
+        ];
+        const items = rows.map(([label, value]) => (
+            `<li><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></li>`
+        )).join('');
+        const title = cityName || record.city || '発生地不明';
+        return `
+            <div class="event-popup">
+                <h4>${escapeHtml(title)}</h4>
+                <ul>${items}</ul>
+            </div>`;
+    }
+
+    function showIncidentEventMarker(markerRecord, incidentRecord) {
+        if (!markerRecord || !markerRecord.latlng || !incidentRecord) {
+            return;
+        }
+        if (!activeEventMarker) {
+            activeEventMarker = L.marker(markerRecord.latlng, {
+                icon: eventMarkerIcon,
+                riseOnHover: true
+            }).addTo(map_f7c6290417a4e3bb10c1043409014bec);
+        } else {
+            activeEventMarker.setLatLng(markerRecord.latlng);
+        }
+        if (typeof activeEventMarker.bringToFront === 'function') {
+            activeEventMarker.bringToFront();
+        }
+        const popupHtml = buildEventPopup(incidentRecord, markerRecord.name);
+        if (popupHtml) {
+            activeEventMarker.bindPopup(popupHtml, { maxWidth: 280 });
+            activeEventMarker.openPopup();
+        }
+    }
+
+    function clearEventMarker() {
+        if (activeEventMarker) {
+            map_f7c6290417a4e3bb10c1043409014bec.removeLayer(activeEventMarker);
+            activeEventMarker = null;
+        }
+    }
+
     function flyAndShow(record) {
         if (!record || !record.marker || !record.latlng) return;
         const targetZoom = Math.max(11, map_f7c6290417a4e3bb10c1043409014bec.getZoom());
@@ -1886,6 +1854,258 @@
             markerGroup.zoomToShowLayer(record.marker, () => flyAndShow(record));
         } else {
             flyAndShow(record);
+        }
+    }
+
+    function setFilterStatus(message) {
+        if (filterSummary) {
+            filterSummary.textContent = message;
+        }
+    }
+
+    function setFilterResultsPlaceholder(message) {
+        if (filterResults) {
+            filterResults.innerHTML = `<div class="result-empty">${message}</div>`;
+        }
+        if (filterLoadMoreBtn) {
+            filterLoadMoreBtn.style.display = 'none';
+        }
+    }
+
+    function populateTimeSelects() {
+        const selects = [filterControls.timeFrom, filterControls.timeTo];
+        const hours = Array.from({ length: 24 }, (_, idx) => idx.toString().padStart(2, '0'));
+        selects.forEach(select => {
+            if (!select) return;
+            const label = select === filterControls.timeFrom ? '開始指定なし' : '終了指定なし';
+            const options = [`<option value="">${label}</option>`];
+            hours.forEach(hour => {
+                options.push(`<option value="${hour}">${hour}時</option>`);
+            });
+            select.innerHTML = options.join('');
+        });
+    }
+
+    function populateSelectOptions(select, values, placeholderText) {
+        if (!select) return;
+        const unique = Array.from(new Set(values.filter(Boolean)));
+        unique.sort((a, b) => a.localeCompare(b, 'ja'));
+        const options = [`<option value="">${placeholderText}</option>`];
+        unique.forEach(value => {
+            options.push(`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`);
+        });
+        const previous = select.value;
+        select.innerHTML = options.join('');
+        if (previous && unique.includes(previous)) {
+            select.value = previous;
+        }
+    }
+
+    function refreshPlaceDetailOptions() {
+        if (!filterControls.placeDetail) return;
+        const base = filterControls.place && filterControls.place.value
+            ? incidentState.data.filter(record => record.place === filterControls.place.value)
+            : incidentState.data;
+        populateSelectOptions(filterControls.placeDetail, base.map(record => record.place_detail), 'すべての詳細');
+    }
+
+    function populateFilterOptions() {
+        if (!incidentState.data.length) {
+            return;
+        }
+        populateSelectOptions(filterControls.city, incidentState.data.map(record => record.city), 'すべての発生地');
+        populateSelectOptions(filterControls.lock, incidentState.data.map(record => record.lock), 'すべての施錠状況');
+        populateSelectOptions(filterControls.place, incidentState.data.map(record => record.place), 'すべての発生場所');
+        populateSelectOptions(filterControls.victimAge, incidentState.data.map(record => record.victim_age), 'すべての年齢');
+        populateSelectOptions(filterControls.victimJob, incidentState.data.map(record => record.victim_job), 'すべての職業');
+        refreshPlaceDetailOptions();
+    }
+
+    function normalizeIncidentRecord(record) {
+        const normalize = (value) => (value === null || value === undefined) ? '' : String(value).trim();
+        const normalizeTime = (value) => {
+            const text = normalize(value);
+            if (!text) {
+                return '';
+            }
+            if (/^\d{1,2}$/.test(text)) {
+                return text.padStart(2, '0');
+            }
+            const match = text.match(/(\d{1,2})/);
+            return match ? match[1].padStart(2, '0') : text;
+        };
+        return {
+            city: normalize(record.city),
+            district: normalize(record.district),
+            date: normalize(record.date),
+            time: normalizeTime(record.time),
+            place: normalize(record.place),
+            place_detail: normalize(record.place_detail),
+            victim_age: normalize(record.victim_age),
+            victim_job: normalize(record.victim_job),
+            lock: normalize(record.lock)
+        };
+    }
+
+    async function loadIncidentData() {
+        if (!filterSection) {
+            return;
+        }
+        setFilterStatus('データ読み込み中...');
+        setFilterResultsPlaceholder('インシデントを読み込んでいます');
+        try {
+            const response = await fetch('incidents.json', { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const payload = await response.json();
+            const records = Array.isArray(payload.records) ? payload.records : [];
+            incidentState.data = records.map(normalizeIncidentRecord);
+            incidentState.page = 1;
+            incidentState.filtered = incidentState.data.slice();
+            populateFilterOptions();
+            applyIncidentFilters(true);
+            setFilterStatus(`全 ${incidentState.data.length.toLocaleString()} 件中 ${incidentState.filtered.length.toLocaleString()} 件を表示`);
+        } catch (error) {
+            console.error('Failed to load incidents.json', error);
+            setFilterStatus('データ読み込みに失敗しました（ローカル閲覧の場合は http 経由で開いてください）');
+            setFilterResultsPlaceholder('データを取得できませんでした');
+        }
+    }
+
+    function getFilterValues() {
+        return {
+            city: filterControls.city ? filterControls.city.value : '',
+            lock: filterControls.lock ? filterControls.lock.value : '',
+            dateFrom: filterControls.dateFrom ? filterControls.dateFrom.value : '',
+            dateTo: filterControls.dateTo ? filterControls.dateTo.value : '',
+            timeFrom: filterControls.timeFrom ? filterControls.timeFrom.value : '',
+            timeTo: filterControls.timeTo ? filterControls.timeTo.value : '',
+            place: filterControls.place ? filterControls.place.value : '',
+            placeDetail: filterControls.placeDetail ? filterControls.placeDetail.value : '',
+            victimAge: filterControls.victimAge ? filterControls.victimAge.value : '',
+            victimJob: filterControls.victimJob ? filterControls.victimJob.value : ''
+        };
+    }
+
+    function matchesFilters(record, filters) {
+        if (filters.city && record.city !== filters.city) return false;
+        if (filters.lock && record.lock !== filters.lock) return false;
+        if (filters.place && record.place !== filters.place) return false;
+        if (filters.placeDetail && record.place_detail !== filters.placeDetail) return false;
+        if (filters.victimAge && record.victim_age !== filters.victimAge) return false;
+        if (filters.victimJob && record.victim_job !== filters.victimJob) return false;
+        if (filters.dateFrom && record.date && record.date < filters.dateFrom) return false;
+        if (filters.dateTo && record.date && record.date > filters.dateTo) return false;
+        if (filters.dateFrom && !record.date) return false;
+        if (filters.dateTo && !record.date) return false;
+        if (filters.timeFrom && record.time && record.time < filters.timeFrom) return false;
+        if (filters.timeTo && record.time && record.time > filters.timeTo) return false;
+        if ((filters.timeFrom || filters.timeTo) && !record.time) return false;
+        return true;
+    }
+
+    function formatDateDisplay(value) {
+        if (!value) return '日付不明';
+        const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (match) {
+            return `${match[1]}/${match[2]}/${match[3]}`;
+        }
+        return value;
+    }
+
+    function formatTimeDisplay(value) {
+        if (!value) return '時間不明';
+        if (/^\d{2}$/.test(value)) {
+            return `${value}時台`;
+        }
+        return value;
+    }
+
+    function renderIncidentCard(record, index) {
+        const cityLabel = record.city || '発生地不明';
+        const detailLines = [record.district, record.place_detail].filter(Boolean).map(escapeHtml);
+        const detailText = detailLines.length ? detailLines.join(' / ') : '詳細情報なし';
+        const lockLabel = record.lock || '施錠情報なし';
+        const badges = [record.victim_age || '年齢不明', record.victim_job || '職業不明'];
+        return `
+            <article class="incident-card" tabindex="0" data-city="${escapeHtml(record.city || '')}" data-index="${index}">
+                <header>
+                    <strong>${escapeHtml(cityLabel)}</strong>
+                    <span>${escapeHtml(formatDateDisplay(record.date))} / ${escapeHtml(formatTimeDisplay(record.time))}</span>
+                </header>
+                <p class="incident-detail">${detailText}</p>
+                <p class="incident-place">${escapeHtml(record.place || '発生場所不明')}</p>
+                <div class="incident-badges">
+                    ${badges.map(label => `<span class="pill">${escapeHtml(label)}</span>`).join('')}
+                </div>
+                <div class="incident-meta">
+                    <span>${escapeHtml(lockLabel)}</span>
+                </div>
+            </article>`;
+    }
+
+    function renderIncidentResults() {
+        if (!filterResults) return;
+        if (!incidentState.filtered.length) {
+            setFilterResultsPlaceholder('条件に一致するデータがありません');
+            setFilterStatus('該当データなし');
+            return;
+        }
+        const limit = incidentState.page * incidentState.pageSize;
+        const rows = [];
+        const max = Math.min(limit, incidentState.filtered.length);
+        for (let idx = 0; idx < max; idx += 1) {
+            rows.push(renderIncidentCard(incidentState.filtered[idx], idx));
+        }
+        filterResults.innerHTML = rows.join('');
+        if (filterLoadMoreBtn) {
+            filterLoadMoreBtn.style.display = incidentState.filtered.length > limit ? 'block' : 'none';
+        }
+        setFilterStatus(`全 ${incidentState.data.length.toLocaleString()} 件中 ${incidentState.filtered.length.toLocaleString()} 件を表示`);
+    }
+
+    function applyIncidentFilters(resetPage = true) {
+        if (!filterSection || !incidentState.data.length) {
+            return;
+        }
+        if (resetPage) {
+            incidentState.page = 1;
+        }
+        const filters = getFilterValues();
+        incidentState.filtered = incidentState.data.filter(record => matchesFilters(record, filters));
+        renderIncidentResults();
+    }
+
+    function resetIncidentFilterControls() {
+        Object.values(filterControls).forEach(control => {
+            if (!control) {
+                return;
+            }
+            if (control.tagName === 'SELECT' || control.tagName === 'INPUT') {
+                control.value = '';
+            }
+        });
+        refreshPlaceDetailOptions();
+    }
+
+    function handleIncidentCardActivation(card) {
+        if (!card) return;
+        const cityName = card.getAttribute('data-city');
+        const indexValue = Number(card.getAttribute('data-index'));
+        const incidentRecord = Number.isFinite(indexValue) ? incidentState.filtered[indexValue] : null;
+        if (!cityName && !incidentRecord) {
+            return;
+        }
+        let markerRecord = cityName ? (markerByCity[cityName] || cityRecords.find(item => item.name === cityName)) : null;
+        if (!markerRecord && incidentRecord && incidentRecord.city) {
+            markerRecord = markerByCity[incidentRecord.city] || cityRecords.find(item => item.name === incidentRecord.city);
+        }
+        if (markerRecord) {
+            focusOnRecord(markerRecord);
+            if (incidentRecord) {
+                showIncidentEventMarker(markerRecord, incidentRecord);
+            }
         }
     }
 
@@ -2011,6 +2231,57 @@
     }
 
     renderSearchList('');
+
+    map_f7c6290417a4e3bb10c1043409014bec.on('click', (ev) => {
+        const target = ev.originalEvent ? ev.originalEvent.target : null;
+        const isInteractive = target && target.classList && target.classList.contains('leaflet-interactive');
+        if (!isInteractive) {
+            clearEventMarker();
+        }
+    });
+
+    if (filterSection) {
+        populateTimeSelects();
+        if (applyIncidentFiltersBtn) {
+            applyIncidentFiltersBtn.addEventListener('click', () => applyIncidentFilters(true));
+        }
+        if (resetIncidentFiltersBtn) {
+            resetIncidentFiltersBtn.addEventListener('click', () => {
+                resetIncidentFilterControls();
+                applyIncidentFilters(true);
+            });
+        }
+        if (filterLoadMoreBtn) {
+            filterLoadMoreBtn.addEventListener('click', () => {
+                incidentState.page += 1;
+                renderIncidentResults();
+            });
+        }
+        if (filterControls.place) {
+            filterControls.place.addEventListener('change', () => {
+                refreshPlaceDetailOptions();
+            });
+        }
+        if (filterResults) {
+            filterResults.addEventListener('click', (ev) => {
+                const card = ev.target.closest('.incident-card');
+                if (!card) return;
+                handleIncidentCardActivation(card);
+            });
+            filterResults.addEventListener('keydown', (ev) => {
+                if (ev.key !== 'Enter' && ev.key !== ' ') {
+                    return;
+                }
+                const card = ev.target.closest('.incident-card');
+                if (!card) return;
+                ev.preventDefault();
+                handleIncidentCardActivation(card);
+            });
+        }
+        loadIncidentData();
+    } else if (filterSummary) {
+        filterSummary.textContent = '';
+    }
 })();
 </script>
 </html>

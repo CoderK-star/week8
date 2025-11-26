@@ -1,0 +1,19 @@
+#map_f7c6290417a4e3bb10c1043409014bec {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.leaflet-container {
+    font-size: 1rem;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
