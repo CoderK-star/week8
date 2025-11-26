@@ -134,6 +134,14 @@
             <figcaption id="imageModalCaption"></figcaption>
         </figure>
     </div>
+
+    <div id="streetViewModal" class="streetview-modal" aria-hidden="true" role="dialog" aria-label="ストリートビュー">
+        <div class="streetview-frame">
+            <button type="button" id="streetViewClose" aria-label="閉じる">×</button>
+            <iframe id="streetViewFrame" title="Street View" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+            <p id="streetViewCaption"></p>
+        </div>
+    </div>
         
 </body>
 <script>
@@ -1329,6 +1337,10 @@
     const imageModalImg = document.getElementById('imageModalImg');
     const imageModalCaption = document.getElementById('imageModalCaption');
     const imageModalClose = document.getElementById('imageModalClose');
+    const streetViewModal = document.getElementById('streetViewModal');
+    const streetViewFrame = document.getElementById('streetViewFrame');
+    const streetViewCaption = document.getElementById('streetViewCaption');
+    const streetViewClose = document.getElementById('streetViewClose');
     const filterSection = document.getElementById('incidentFilterSection');
     const filterSummary = document.getElementById('filterSummary');
     const filterResults = document.getElementById('filterResults');
@@ -1367,6 +1379,7 @@
     let showFullArticle = false;
     let open = true; // false: 半分表示, true: 全開
     let activeModalSrc = null;
+    let streetViewKeyHandler = null;
 
     function updatePanelState() {
         if (open) {
@@ -1560,6 +1573,93 @@
         } else {
             openImageModal(src, title);
         }
+    }
+
+    function openStreetViewModal(lat, lng, cityName) {
+        if (!streetViewModal || !streetViewFrame) {
+            return;
+        }
+        const safeLat = Number(lat);
+        const safeLng = Number(lng);
+        if (!Number.isFinite(safeLat) || !Number.isFinite(safeLng)) {
+            return;
+        }
+        if (streetViewKeyHandler) {
+            document.removeEventListener('keydown', streetViewKeyHandler);
+            streetViewKeyHandler = null;
+        }
+        const url = `https://www.google.com/maps?q=&layer=c&cbll=${safeLat},${safeLng}&cbp=11,0,0,0,0&output=svembed`;
+        streetViewFrame.src = url;
+        if (streetViewCaption) {
+            const label = cityName ? `${cityName} のストリートビュー` : 'ストリートビュー';
+            streetViewCaption.textContent = label;
+        }
+        streetViewModal.classList.add('open');
+        streetViewModal.setAttribute('aria-hidden', 'false');
+        streetViewKeyHandler = (ev) => {
+            if (ev.key === 'Escape') {
+                closeStreetViewModal();
+            }
+        };
+        document.addEventListener('keydown', streetViewKeyHandler);
+    }
+
+    function closeStreetViewModal() {
+        if (!streetViewModal || !streetViewModal.classList.contains('open')) {
+            return;
+        }
+        streetViewModal.classList.remove('open');
+        streetViewModal.setAttribute('aria-hidden', 'true');
+        if (streetViewFrame) {
+            streetViewFrame.src = 'about:blank';
+        }
+        if (streetViewCaption) {
+            streetViewCaption.textContent = '';
+        }
+        if (streetViewKeyHandler) {
+            document.removeEventListener('keydown', streetViewKeyHandler);
+            streetViewKeyHandler = null;
+        }
+    }
+
+    function bindStreetViewModalEvents() {
+        if (streetViewClose) {
+            streetViewClose.addEventListener('click', closeStreetViewModal);
+        }
+        if (streetViewModal) {
+            streetViewModal.addEventListener('click', (ev) => {
+                if (ev.target === streetViewModal) {
+                    closeStreetViewModal();
+                }
+            });
+        }
+    }
+
+    function openStreetViewFromButton(button) {
+        if (!button) {
+            return;
+        }
+        const lat = parseFloat(button.getAttribute('data-lat'));
+        const lng = parseFloat(button.getAttribute('data-lng'));
+        const title = button.getAttribute('data-city') || '';
+        openStreetViewModal(lat, lng, title);
+    }
+
+    function attachStreetViewButtonHandler() {
+        if (!activeEventMarker || !activeEventMarker.getPopup()) {
+            return;
+        }
+        const popupElement = activeEventMarker.getPopup().getElement();
+        if (!popupElement) {
+            setTimeout(attachStreetViewButtonHandler, 50);
+            return;
+        }
+        const button = popupElement.querySelector('.streetview-btn');
+        if (!button || button.dataset.bound === '1') {
+            return;
+        }
+        button.dataset.bound = '1';
+        button.addEventListener('click', () => openStreetViewFromButton(button));
     }
 
     function buildTitleCandidates(name) {
@@ -1782,7 +1882,7 @@
         highlightState.timeout = setTimeout(() => resetHighlight(), 5500);
     }
 
-    function buildEventPopup(record, cityName) {
+    function buildEventPopup(record, cityName, latlng) {
         if (!record) {
             return null;
         }
@@ -1800,10 +1900,15 @@
             `<li><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></li>`
         )).join('');
         const title = cityName || record.city || '発生地不明';
+        let streetViewButton = '';
+        if (latlng && typeof latlng.lat === 'number' && typeof latlng.lng === 'number') {
+            streetViewButton = `<button type="button" class="streetview-btn" data-lat="${latlng.lat}" data-lng="${latlng.lng}" data-city="${escapeHtml(title)}">360° Street View</button>`;
+        }
         return `
             <div class="event-popup">
                 <h4>${escapeHtml(title)}</h4>
                 <ul>${items}</ul>
+                ${streetViewButton}
             </div>`;
     }
 
@@ -1822,9 +1927,10 @@
         if (typeof activeEventMarker.bringToFront === 'function') {
             activeEventMarker.bringToFront();
         }
-        const popupHtml = buildEventPopup(incidentRecord, markerRecord.name);
+        const popupHtml = buildEventPopup(incidentRecord, markerRecord.name, markerRecord.latlng);
         if (popupHtml) {
             activeEventMarker.bindPopup(popupHtml, { maxWidth: 280 });
+            activeEventMarker.once('popupopen', attachStreetViewButtonHandler);
             activeEventMarker.openPopup();
         }
     }
@@ -2231,6 +2337,7 @@
     }
 
     renderSearchList('');
+    bindStreetViewModalEvents();
 
     map_f7c6290417a4e3bb10c1043409014bec.on('click', (ev) => {
         const target = ev.originalEvent ? ev.originalEvent.target : null;
